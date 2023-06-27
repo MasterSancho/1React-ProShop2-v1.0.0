@@ -20,7 +20,7 @@ function checkFileType(file, cb) {
  if (extname && mimetype) {
   return cb(null, true);
  } else {
-  cb('Images only!');
+  cb({ message: 'Images only!' });
  }
 }
 
@@ -30,7 +30,7 @@ const upload = multer({
 
 router.post('/', upload.single('image'), (req, res) => {
  res.send({
-  message: 'Image Uploaded',
+  message: 'Image uploaded successfully',
   image: `/${req.file.path}`,
  });
 });
