@@ -4,12 +4,29 @@ import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { useGetProductsQuery } from '../../slices/productsApiSlice';
+import { toast } from 'react-toastify';
+import {
+ useGetProductsQuery,
+ useCreateProductMutation,
+} from '../../slices/productsApiSlice';
 
 const ProductListScreen = () => {
  const { data: products, isLoading, error } = useGetProductsQuery();
 
+ const [createProduct, { isLoading: createLoading, error: createError }] =
+  useCreateProductMutation();
+
  const deleteHandler = (id) => {};
+
+ const createProductHandler = async () => {
+  if (window.confirm('Are you sure you want to create a product?')) {
+   try {
+    await createProduct();
+   } catch (error) {
+    toast.error(error?.data?.message || error.error);
+   }
+  }
+ };
 
  return (
   <>
@@ -19,11 +36,13 @@ const ProductListScreen = () => {
     </Col>
 
     <Col className='text-end'>
-     <Button className='btn-sm m-3'>
+     <Button className='btn-sm m-3' onClick={createProductHandler}>
       <FaEdit /> Create Product
      </Button>
     </Col>
    </Row>
+
+   {createLoading && <Loader />}
 
    {isLoading ? (
     <Loader />
